@@ -360,18 +360,22 @@ app.factory('ngTableParams', ['$q', '$log', function ($q, $log) {
                 settings.$loading = false;
                 log('ngTable: current scope', settings.$scope);
                 if (settings.groupBy) {
-                    self.data = settings.$scope.$groups = data;
+                    self.data = data;
+                    if (settings.$scope) settings.$scope.$groups = data;
                 } else {
-                    self.data = settings.$scope.$data = data;
+                    self.data = data;
+                    if (settings.$scope) settings.$scope.$data = data;
                 }
-                settings.$scope.pages = self.generatePagesArray(self.page(), self.total(), self.count());
-                settings.$scope.$emit('ngTableAfterReloadData');
+                if (settings.$scope) {
+                    settings.$scope.pages = self.generatePagesArray(self.page(), self.total(), self.count());
+                    settings.$scope.$emit('ngTableAfterReloadData');
+                }
             });
         };
 
         this.reloadPages = function () {
             var self = this;
-            settings.$scope.pages = self.generatePagesArray(self.page(), self.total(), self.count());
+            if (settings.$scope) settings.$scope.pages = self.generatePagesArray(self.page(), self.total(), self.count());
         };
 
         var params = this.$params = {
